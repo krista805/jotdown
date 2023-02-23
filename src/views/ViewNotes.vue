@@ -1,39 +1,16 @@
 <template>
   <div class="notes">
-    <AddEditNote
-      ><template #buttons>
+    <AddEditNote v-model="newNote" ref="addEditNoteRef">
+      <template #buttons>
         <button
           @click="addNote"
           class="button is-link has-background-success"
           :disabled="!newNote"
         >
           Add New Note
-        </button></template
-      >
+        </button>
+      </template>
     </AddEditNote>
-    <!-- <div class="card has-background-success-dark p-4 mb-5">
-      <div class="field">
-        <div class="control">
-          <textarea
-            ref="newNoteRef"
-            v-model="newNote"
-            class="textarea"
-            placeholder="Add a new note"
-          />
-        </div>
-      </div>
-      <div class="field is-grouped is-grouped-right">
-        <div class="control">
-          <button
-            @click="addNote"
-            class="button is-link has-background-success"
-            :disabled="!newNote"
-          >
-            Add New Note
-          </button>
-        </div>
-      </div>
-    </div> -->
 
     <Note v-for="note in storeNotes.notes" :key="note.id" :note="note" />
   </div>
@@ -57,12 +34,12 @@ const storeNotes = useStoreNotes()
     Notes
 */
 const newNote = ref("")
-const newNoteRef = ref(null)
+const addEditNoteRef = ref(null)
 
 const addNote = () => {
   storeNotes.addNote(newNote.value)
 
   newNote.value = ""
-  newNoteRef.value.focus()
+  addEditNoteRef.value.focusTextarea()
 }
 </script>
