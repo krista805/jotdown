@@ -18,6 +18,13 @@
         </tr>
       </tbody>
     </table>
+    <input
+      v-model="reviewInput"
+      class="input"
+      type="text"
+      placeholder="Do you love JotDown?"
+      v-autofocus
+    />
   </div>
 </template>
 
@@ -25,10 +32,19 @@
 /*
     Imports
 */
+import { ref } from "vue"
 import { useStoreNotes } from "@/stores/storeNotes"
+import { vAutofocus } from "@/directives/vAutofocus"
+import { useWatchCharacters } from "@/use/useWatchCharacters"
 
 /*
     Store
 */
 const storeNotes = useStoreNotes()
+
+/*
+    Comment field reviewing JotDown
+*/
+const reviewInput = ref("")
+useWatchCharacters(reviewInput, 50)
 </script>
