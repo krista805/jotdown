@@ -29,7 +29,7 @@
     Imports
 */
 import { ref } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import AddEditNote from "@/components/Notes/AddEditNote.vue"
 import { useStoreNotes } from "@/stores/storeNotes"
 
@@ -37,6 +37,7 @@ import { useStoreNotes } from "@/stores/storeNotes"
     Router
 */
 const route = useRoute()
+const router = useRouter()
 
 /*
     Store
@@ -55,5 +56,6 @@ noteContent.value = storeNotes.getNoteContent(route.params.id)
 */
 const handleSaveClicked = () => {
   storeNotes.updateNote(route.params.id, noteContent.value)
+  router.push("/")
 }
 </script>
