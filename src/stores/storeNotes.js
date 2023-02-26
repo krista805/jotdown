@@ -1,31 +1,24 @@
 import { defineStore } from "pinia"
-import { collection, onSnapshot } from "firebase/firestore"
+import {
+  collection,
+  onSnapshot,
+  doc,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore"
 import { db } from "@/js/firebase"
+
+const notesCollectionRef = collection(db, "notes")
 
 export const useStoreNotes = defineStore("storeNotes", {
   state: () => {
     return {
-      notes: [
-        // {
-        //   id: "id1",
-        //   content:
-        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.",
-        // },
-        // {
-        //   id: "id2",
-        //   content: "This is a shorter note",
-        // },
-        // {
-        //   id: "id3",
-        //   content:
-        //     "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Consectetur alias, quidem placeat repellendus libero, magnam quibusdam amet, reiciendis animi eos molestiae est soluta cupiditate obcaecati eligendi. Expedita beatae incidunt possimus?",
-        // },
-      ],
+      notes: [],
     }
   },
   actions: {
     getNotes() {
-      onSnapshot(collection(db, "notes"), (querySnapshot) => {
+      onSnapshot(notesCollectionRef, (querySnapshot) => {
         let notes = []
         querySnapshot.forEach((doc) => {
           let note = {
@@ -37,22 +30,20 @@ export const useStoreNotes = defineStore("storeNotes", {
         this.notes = notes
       })
     },
-    addNote(newNoteContent) {
-      console.log(newNoteContent)
+    async addNote(newNoteContent) {
       let currentDate = new Date().getTime()
       let id = currentDate.toString()
 
-      let note = {
-        id,
+      // this.notes.unshift(note)
+      await setDoc(doc(notesCollectionRef, id), {
         content: newNoteContent,
-      }
-
-      this.notes.unshift(note)
-    },
-    deleteNote(idToDelete) {
-      this.notes = this.notes.filter((note) => {
-        return note.id !== idToDelete
       })
+    },
+    async deleteNote(idToDelete) {
+      // this.notes = this.notes.filter((note) => {
+      //   return note.id !== idToDelete
+      // })
+      await deleteDoc(doc(notesCollectionRef, idToDelete))
     },
     updateNote(id, content) {
       //Short hand below instead of using a 'return' and curly braces
