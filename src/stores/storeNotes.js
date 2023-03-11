@@ -15,10 +15,12 @@ export const useStoreNotes = defineStore("storeNotes", {
   state: () => {
     return {
       notes: [],
+      notesLoaded: false
     }
   },
   actions: {
     getNotes() {
+      this.notesLoaded = false
       onSnapshot(notesCollectionQuery, (querySnapshot) => {
         // console.log('querySnapshot', querySnapshot)
         let notes = []
@@ -26,10 +28,18 @@ export const useStoreNotes = defineStore("storeNotes", {
           let note = {
             id: doc.id,
             content: doc.data().content,
+            date: doc.data().date
           }
           notes.push(note)
         })
+        
         this.notes = notes
+        this.notesLoaded = true
+
+        // setTimeout(() => {
+          // this.notes = notes
+          // this.notesLoaded = true
+        // }, 2000)
       })
     },
     async addNote(newNoteContent) {
