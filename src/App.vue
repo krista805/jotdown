@@ -11,19 +11,19 @@
   Imports
 */
 import { onMounted } from "vue"
-import { useStoreNotes } from "@/stores/storeNotes"
+import { useStoreAuth } from "@/stores/storeAuth"
 import NavBar from "@/components/Layout/NavBar.vue"
 
 /*
   Store
 */
-const storeNotes = useStoreNotes()
+const storeAuth = useStoreAuth()
 
 /*
   Mounted
 */
 onMounted(() => {
-  storeNotes.getNotes()
+  storeAuth.init()
 })
 </script>
 
