@@ -2,23 +2,35 @@ import { defineStore } from "pinia"
 import {
   collection,
   onSnapshot,
-  doc, deleteDoc, updateDoc,
-  query, orderBy,
-  addDoc
+  doc,
+  deleteDoc,
+  updateDoc,
+  query,
+  orderBy,
+  addDoc,
 } from "firebase/firestore"
 import { db } from "@/js/firebase"
+import { useStoreAuth } from "@/stores/storeAuth"
 
-const notesCollectionRef = collection(db, "notes")
-const notesCollectionQuery = query(notesCollectionRef, orderBy('date', "desc"))
+let notesCollectionRef
+let notesCollectionQuery
 
 export const useStoreNotes = defineStore("storeNotes", {
   state: () => {
     return {
       notes: [],
-      notesLoaded: false
+      notesLoaded: false,
     }
   },
   actions: {
+    init() {
+      //Access auth store so we can access use id
+      const storeAuth = useStoreAuth()
+      // Initialize our database refs
+      notesCollectionRef = collection(db, "users", storeAuth.user.id, "notes")
+      notesCollectionQuery = query(notesCollectionRef, orderBy("date", "desc"))
+      this.getNotes()
+    },
     getNotes() {
       this.notesLoaded = false
       onSnapshot(notesCollectionQuery, (querySnapshot) => {
@@ -28,17 +40,17 @@ export const useStoreNotes = defineStore("storeNotes", {
           let note = {
             id: doc.id,
             content: doc.data().content,
-            date: doc.data().date
+            date: doc.data().date,
           }
           notes.push(note)
         })
-        
+
         this.notes = notes
         this.notesLoaded = true
 
         // setTimeout(() => {
-          // this.notes = notes
-          // this.notesLoaded = true
+        // this.notes = notes
+        // this.notesLoaded = true
         // }, 2000)
       })
     },
@@ -48,7 +60,7 @@ export const useStoreNotes = defineStore("storeNotes", {
 
       await addDoc(notesCollectionRef, {
         content: newNoteContent,
-        date
+        date,
       })
     },
     async deleteNote(idToDelete) {
@@ -56,7 +68,7 @@ export const useStoreNotes = defineStore("storeNotes", {
     },
     async updateNote(id, content) {
       await updateDoc(doc(notesCollectionRef, id), {
-        content
+        content,
       })
     },
   },
