@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router"
+import { useStoreAuth } from "@/stores/storeAuth"
 import ViewNotes from "@/views/ViewNotes.vue"
 import ViewEditNote from "@/views/ViewEditNote.vue"
 import ViewStats from "@/views/ViewStats.vue"
@@ -30,6 +31,20 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
+})
+
+// Navigation guards
+router.beforeEach(async (to, from) => {
+  const storeAuth = useStoreAuth()
+  console.log("to:", to)
+  if (!storeAuth.user.id && to.name !== "auth") {
+    return { name: "auth" }
+  }
+
+  if (storeAuth.user.id && to.name === "auth") {
+    // Leave users on the route they are currently on if they are logged in and trying to access the auth page
+    return false
+  }
 })
 
 export default router
